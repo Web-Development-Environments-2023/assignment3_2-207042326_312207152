@@ -3,19 +3,6 @@ var router = express.Router();
 const recipes_utils = require("./utils/recipes_utils");
 router.get("/", (req, res) => res.send("im here"));
 
-
-/**
- * This path returns a full details of a recipe by its id
- */
-router.get("/:recipeId", async (req, res, next) => {
-  try {
-    const recipe = await recipes_utils.getRecipeDetails(req.params.recipeId);
-    res.send(recipe);
-  } catch (error) {
-    next(error);
-  }
-});
-
 /**
  * This path returns a full details of a 3 random recipe
  */
@@ -36,7 +23,6 @@ router.get("/random", async (req, res, next) => {
 router.get("/search", async (req, res, next) => {
   try {
     const query = req.query.searchQuery;
-    console.log("pastaaaaaaaaaaaaaaaaaaa");
     const number = parseInt(req.query.number);
     const cuisine = req.query.cuisine;
     const diet = req.query.diet;
@@ -124,5 +110,15 @@ router.get("/fullDetailes", async (req, res, next) => {
   }
 });
 
-
+/**
+ * This path returns a full details of a recipe by its id
+ */
+router.get("/:recipeId", async (req, res, next) => {
+  try {
+    const recipe = await recipes_utils.getRecipeDetails(req.params.recipeId);
+    res.send(recipe);
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = router;
