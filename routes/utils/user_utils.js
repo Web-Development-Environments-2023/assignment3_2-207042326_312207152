@@ -89,7 +89,7 @@ async function getMyFamilyRecipes(user_name){
 //  * This func returns if this recipe was watched by a specific user
 // */
 // async function isWatched(recipe_id, user_name){
-//     const count = await DButils.execQuery(`SELECT COUNT(*) FROM watched WHERE (rec_id=${recipe_id}, username='${user_name})`);
+//     const count = await DButils.execQuery(`SELECT COUNT(*) FROM watched WHERE (recipe_id=${recipe_id}, username='${user_name})`);
 
 //     if (count == 0)
 //         return False;
