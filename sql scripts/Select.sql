@@ -1,7 +1,18 @@
-SELECT * FROM mydb.users;
+
+DROP TABLE mydb.users;
+CREATE TABLE mydb.users(
+  username VARCHAR(255),
+  password VARCHAR(255),
+  firstname VARCHAR(255),
+  lastname VARCHAR(255),
+  country VARCHAR(255),
+  email VARCHAR(255),
+  profilePic VARCHAR(255)
+  );
+DROP TABLE mydb.watched;
 CREATE TABLE mydb.watched(
-  req_id INT,
-  user_name VARCHAR(255),
+  recipe_id INT,
+  username VARCHAR(255),
   date DATE
   );
 
@@ -27,20 +38,21 @@ CREATE TABLE mydb.RegularRecipes(
 
 DROP TABLE mydb.IngredientsRecipes;
 CREATE TABLE mydb.IngredientsRecipes(
-    id INT,
-    ingredients VARCHAR(255)
+    counter_recipe INT,
+    ingredient VARCHAR(255)
   );
 
 DROP TABLE mydb.InstructionRecipes;
 CREATE TABLE mydb.InstructionRecipes(
-    id INT,
-    counter INT,
-    instructions VARCHAR(255)
+    counter_recipe INT,
+    counter_instruction INT,
+    instruction VARCHAR(255)
   );
 
-DROP TABLE mydb.FamilyRecipes;
 
-  CREATE TABLE FamilyRecipes(
+DROP TABLE mydb.FamilyRecipes;
+CREATE TABLE mydb.FamilyRecipes(
     username VARCHAR(255),
     recipe_id INT
-  )
+  );
+

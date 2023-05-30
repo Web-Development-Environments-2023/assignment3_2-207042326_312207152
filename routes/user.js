@@ -52,6 +52,7 @@ router.get('/favorites', async (req,res,next) => {
   }
 });
 
+
 router.post('/myRecipes', async(req, res, next) =>{
   try{
     //Regular recipes
@@ -74,7 +75,7 @@ router.post('/myRecipes', async(req, res, next) =>{
   
     //Create the recipe
     await user_utils.createRecipes(imageUrl, title, readyInMinutes, popularity, vegan, vegetarian, gluten_free, ingredients, instructions, servings, username);
-    res.status(200).send("Created successfully");
+    res.status(200).send("Recipe Create successfully");
 
   } catch(error){
     next(error);

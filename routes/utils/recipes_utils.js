@@ -1,5 +1,7 @@
 const axios = require("axios");
 const api_domain = "https://api.spoonacular.com/recipes";
+const DButils = require("./DButils");
+
 /**
  * Get recipes list from spooncular response and extract the relevant recipe data for preview
  * @param {*} recipes_info 
@@ -95,7 +97,7 @@ async function getPreviewRecipes(res){
  * This func returns the last three recipes which were watched by a specific user
 */
 async function getLastThreeRecipes(user_name){
-    const recipes = await DButils.execQuery(`SELECT recipe_id FROM mydb.watched WHERE username='${username}' ORDER BY date desc limit 3`);
+    const recipes = await DButils.execQuery(`SELECT recipe_id FROM mydb.watched WHERE username='${user_name}' ORDER BY date desc limit 3`);
     return recipes;
 }
 
@@ -103,7 +105,7 @@ async function getLastThreeRecipes(user_name){
  * This func addes the last recipe were watched by a specific user
 */
 async function postLastRecipe(user_name, recipe_id){
-    await DButils.execQuery(`insert into mydb.watched values(${recipe_id}, '${user_name}', NOW())`);
+    await DButils.execQuery(`INSERT INTO mydb.watched VALUES('${recipe_id}', '${user_name}', NOW())`);
 }
 
 /*
@@ -171,8 +173,8 @@ async function getMyFullDetailsOfRecipe(recipe_id) {
     return fullDetails;
 }
 
-async function recipeWachedByUser(user_name, recipe_id){
-    const counter = await DButils.execQuery(`SELECT count(*) AS count FROM watched WHERE user_name='${user_name}' AND recipe_id='${recipe_id}'`);
+async function recipeWatchedByUser(user_name, recipe_id){
+    const counter = await DButils.execQuery(`SELECT count(*) AS count FROM watched WHERE username='${user_name}' AND recipe_id='${recipe_id}'`);
     if(counter[0].count >= 1){
         return true;
     }
@@ -189,7 +191,7 @@ exports.postLastRecipe = postLastRecipe;
 exports.getPreviewRecipes = getPreviewRecipes;
 exports.getFullDetailsOfRecipe = getFullDetailsOfRecipe;
 exports.getMyFullDetailsOfRecipe = getMyFullDetailsOfRecipe;
-exports.recipeWachedByUser = recipeWachedByUser;
+exports.recipeWatchedByUser = recipeWatchedByUser;
 
 
 

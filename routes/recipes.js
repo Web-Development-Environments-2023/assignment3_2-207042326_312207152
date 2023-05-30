@@ -3,6 +3,7 @@ var router = express.Router();
 const recipes_utils = require("./utils/recipes_utils");
 router.get("/", (req, res) => res.send("im here"));
 
+
 /**
  * This path returns a full details of a 3 random recipe
  */
@@ -47,17 +48,21 @@ router.get("/search", async (req, res, next) => {
 });
 
 /**
- * This path returns a full details of the 3 latest recipes
+ * This path returns a full details of the 3 latest recipes ONLY if the user logged in
  */
-//localhost:3000/recipes/170000
+//localhost:3000/recipes/watched
 router.get("/watched", async (req, res, next) => {
   try {
-    const recipes = await recipes_utils.getLastThreeRecipes(req.session.username);
-    console.log(recipes);
+    let recipes;
+    if (req.session && req.session.username){
+      recipes = await recipes_utils.getLastThreeRecipes(req.session.username);
+    }
     let results = [];
-    for (let i = 0; i < recipes.length; i++){
-      console.log(recipes[i].rec_id);
-      results[i] = await recipes_utils.getFullDetailsOfRecipe(recipes[i].rec_id);
+    let i = 0;
+    while (recipes && i<recipes.length){
+        // console.log(recipes[i].recipe_id);
+        results[i] = await recipes_utils.getFullDetailsOfRecipe(recipes[i].recipe_id);
+        i++;
     }
     res.send(results);
   } catch (error) {
@@ -65,14 +70,14 @@ router.get("/watched", async (req, res, next) => {
   }
 });
 
-/**
+/*
  * This path returns T if the recipes watched by the user
- */
-//localhost:3000/recipes/170000
+ * http://localhost:3000/recipes/isWatched?recipeId=150000
+*/
 router.get("/isWatched", async (req, res, next) => {
   try {
     if (req.session.username){
-      const recipe = await recipes_utils.recipeWachedByUser(req.session.username, req.query.recipeId);
+      const recipe = await recipes_utils.recipeWatchedByUser(req.session.username, req.query.recipeId);
       res.send(recipe);
     }
   } catch (error) {
@@ -82,6 +87,8 @@ router.get("/isWatched", async (req, res, next) => {
 
 /**
  * This path returns the full details of a recipe by it's id
+ * also add recipe to watched table
+ * http://localhost:3000/recipes/fullDetailes?recipeid=150000
  */
 router.get("/fullDetailes", async (req, res, next) => {
   try {
@@ -96,10 +103,12 @@ router.get("/fullDetailes", async (req, res, next) => {
 });
 
 /**
- * This path returns the full details of my recipe by it's id
+ * This path returns the full details of MY recipe by it's id
+ * also add recipe to watched table
  */
  router.get("/myFullDetailes", async (req, res, next) => {
   try {
+    console.log("recipe id is: " + req.query.recipeid);
     const recipe = await recipes_utils.getMyFullDetailsOfRecipe(req.query.recipeid);
     if (req.session && req.session.username){
       recipes_utils.postLastRecipe(req.session.username, recipe.id);
