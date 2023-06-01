@@ -27,6 +27,7 @@ router.use(async function (req, res, next) {
 router.post('/favorites', async (req,res,next) => {
   try{
     const user_id = req.session.username;
+    console.log("user_id" + user_id);
     const recipe_id = req.body.recipeId;
     await user_utils.markAsFavorite(user_id,recipe_id);
     res.status(200).send("The Recipe successfully saved as favorite");
@@ -45,6 +46,7 @@ router.get('/favorites', async (req,res,next) => {
     const recipes_id = await user_utils.getFavoriteRecipes(username);
     let recipes_id_array = [];
     recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
+    console.log(recipes_id_array);
     const results = await recipe_utils.getPreviewRecipes(recipes_id_array);
     res.status(200).send(results);
   } catch(error){
@@ -53,6 +55,23 @@ router.get('/favorites', async (req,res,next) => {
 });
 
 
+/**
+ * This path create a recipe belong to the user.
+ * maybe need to check the user is logged in???????????????????????
+ * http://localhost:3000/users/myRecipes
+{
+    "image" : "https://www.google.com/search?q=pizza&source=lnms&tbm=isch&sa=X&ved=2ahUKEwiBqe2626H_AhUTUqQEHVF_AV4Q_AUoAXoECAEQAw&biw=727&bih=488&dpr=1.65#imgrc=94tQ5pOoegtPzM",
+    "title" : "pizz",
+    "readyInMinutes" :  "10",
+    "popularity" : "1",
+    "vegan" : "false",
+    "vegetarian" : "true",
+    "gluten_free" : "false",
+    "ingredients" : ["flour"],
+    "instructions" : ["bak,b"],
+    "servings" : "2"
+}
+ */
 router.post('/myRecipes', async(req, res, next) =>{
   try{
     //Regular recipes
@@ -63,12 +82,12 @@ router.post('/myRecipes', async(req, res, next) =>{
     const vegan = req.body.vegan;
     const vegetarian = req.body.vegetarian;
     const gluten_free = req.body.gluten_free;
-    const ingredients = req.body.ingrediants;
+    const ingredients = req.body.ingredients;
     const instructions = req.body.instructions;
     const servings = req.body.servings;
     const username = req.session.username;
 
-    console.log(req.body.ingrediants);
+    console.log("req.body.ingredients: " + req.body.ingredients);
     console.log(ingredients);
     console.log(req.body.instructions);
     console.log(instructions);

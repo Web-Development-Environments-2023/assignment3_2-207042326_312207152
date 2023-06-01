@@ -1,11 +1,11 @@
 const DButils = require("./DButils");
 
 async function markAsFavorite(user_id, recipe_id){
-    await DButils.execQuery(`insert into FavoriteRecipes values ('${user_id}',${recipe_id})`);
+    await DButils.execQuery(`insert into mydb.FavoriteRecipes values ('${user_id}','${recipe_id}')`);
 }
 
 async function getFavoriteRecipes(user_id){
-    const recipes_id = await DButils.execQuery(`select recipe_id from FavoriteRecipes where username='${user_id}'`);
+    const recipes_id = await DButils.execQuery(`select recipe_id from mydb.FavoriteRecipes where username='${user_id}'`);
     return recipes_id;
 }
 
@@ -15,26 +15,30 @@ async function getFavoriteRecipes(user_id){
 async function createRecipes(imageUrl, title, readyInMinutes, popularity, vegan, vegetarian, gluten_free, ingredients, instructions, servings, user_name){
     let id = await DButils.execQuery(`SELECT COUNT(*) as number FROM mydb.RegularRecipes`);
     id = id[0].number + 1;
-    
+    console.log(id);
     await DButils.execQuery(`insert into mydb.RegularRecipes values (${id},'${imageUrl}', '${title}', ${readyInMinutes}, ${popularity}, ${vegan}, ${vegetarian}, ${gluten_free}, ${servings}, '${user_name}')`);
     
     console.log(ingredients);
-    
-    for (let i = 0; i < ingredients.length; i++){
-        await DButils.execQuery(`insert into mydb.ingredientsrecipes values (${id}, '${ingredients[i]}')`);
-    }
-    
+
     for (let i = 0; i < instructions.length; i++){
-        
+        console.log("instructions[i] "+instructions[i]);
         await DButils.execQuery(`insert into mydb.instructionrecipes values (${id}, ${i + 1}, '${instructions[i]}')`);
     }
+    
+    for (let z = 0; z < ingredients.length; z++){
+        console.log("ingredients[i] "+ingredients[z]);
+        console.log("id2: " + id);
+        await DButils.execQuery(`insert into mydb.ingredientsrecipes values (${id}, '${ingredients[z]}')`);
+    }
+    
+   
 }
 
 /*
  * This func return the true if the recipe (recipe_id) ia a favorite recipe for user_name and false if not
 */
 async function isFavoriteRecipe(user_name, recipe_id){
-    const count_favorites = await DButils.execQuery(`SELECT count(*) AS amount FROM FavoriteRecipes WHERE username='${user_name}' AND recipe_id='${recipe_id}'`);
+    const count_favorites = await DButils.execQuery(`SELECT count(*) AS amount FROM mydb.FavoriteRecipes WHERE username='${user_name}' AND recipe_id='${recipe_id}'`);
     if (count_favorites[0].amount >= 1)
         return true;
     else
@@ -76,7 +80,7 @@ async function getMyRecipes(user_name){
 */
 async function getMyFamilyRecipes(user_name){
     try {
-        const recipesIds = await DButils.execQuery(`SELECT * from FamilyRecipes where username='${user_name}'`);
+        const recipesIds = await DButils.execQuery(`SELECT * from mydb.FamilyRecipes where username='${user_name}'`);
         return recipesIds;
     }
     catch(err){

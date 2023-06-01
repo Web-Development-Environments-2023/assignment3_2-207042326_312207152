@@ -105,6 +105,7 @@ router.get("/fullDetailes", async (req, res, next) => {
 /**
  * This path returns the full details of MY recipe by it's id
  * also add recipe to watched table
+ * http://localhost:3000/recipes/myFullDetailes?recipeid=1
  */
  router.get("/myFullDetailes", async (req, res, next) => {
   try {

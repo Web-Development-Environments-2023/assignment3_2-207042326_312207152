@@ -18,6 +18,7 @@ async function getRecipeInformation(recipe_id) {
 }
 
 async function getRecipeDetails(recipe_id) {
+    console.log("recipe_id: "+ recipe_id);
     let recipe_info = await getRecipeInformation(recipe_id);
     let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree } = recipe_info.data;
 
@@ -84,9 +85,11 @@ async function getSearchRecipes(query, number, cuisine, diet, intolerances) {
 */
 async function getPreviewRecipes(res){
     let response = [];
+    console.log("Res: "+res);
 
     for (let i = 0; i < res.length; i++){
-        response[i] = await getRecipeDetails(res[i].id);
+        response[i] = await getRecipeDetails(res[i]);
+        console.log("response[i]: "+ response[i]);
     }
 
     return response;
@@ -142,14 +145,14 @@ async function getMyFullDetailsOfRecipe(recipe_id) {
     let recipe_info = await DButils.execQuery(`SELECT * FROM mydb.regularrecipes WHERE id='${recipe_id}'`);
     let { id, title, imageUrl, readyInMinutes, popularity, vegan, vegetarian, glutenFree, servings } = recipe_info[0];
     
-    let instructions = await DButils.execQuery(`SELECT * FROM instructionrecipes WHERE recipe_id='${recipe_id}'`);
+    let instructions = await DButils.execQuery(`SELECT * FROM mydb.instructionrecipes WHERE counter_recipe='${recipe_id}'`);
     let return_instructions = [];
 
     for (let i = 0; i < instructions.length; i++ ){
         return_instructions.push({number: instructions[i].instruction_id, step: instructions[i].instruction_data});
     }
     
-    let ingredients = await DButils.execQuery(`SELECT * FROM ingredientsrecipes WHERE recipe_id='${recipe_id}'`);
+    let ingredients = await DButils.execQuery(`SELECT * FROM mydb.ingredientsrecipes WHERE counter_recipe='${recipe_id}'`);
     let return_ingredients = [];
 
     for (let i = 0; i < ingredients.length; i++ ){
@@ -174,7 +177,7 @@ async function getMyFullDetailsOfRecipe(recipe_id) {
 }
 
 async function recipeWatchedByUser(user_name, recipe_id){
-    const counter = await DButils.execQuery(`SELECT count(*) AS count FROM watched WHERE username='${user_name}' AND recipe_id='${recipe_id}'`);
+    const counter = await DButils.execQuery(`SELECT count(*) AS count FROM mydb.watched WHERE username='${user_name}' AND recipe_id='${recipe_id}'`);
     if(counter[0].count >= 1){
         return true;
     }

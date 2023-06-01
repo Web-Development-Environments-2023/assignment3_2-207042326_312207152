@@ -56,3 +56,6 @@ CREATE TABLE mydb.FamilyRecipes(
     recipe_id INT
   );
 
+DELETE FROM mydb.instructionrecipes;
+DELETE FROM mydb.ingredientsrecipes;
+DELETE FROM mydb.regularrecipes;
