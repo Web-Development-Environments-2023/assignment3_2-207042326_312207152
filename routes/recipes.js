@@ -18,7 +18,7 @@ router.get("/random", async (req, res, next) => {
 });
 
 /**
- * This path gets a query and returns few recipies which are ansewring it
+ * This path gets a query and returns few recipies that answere it
  * number - int (5,10,15)
  */
 router.get("/search", async (req, res, next) => {
@@ -29,7 +29,6 @@ router.get("/search", async (req, res, next) => {
     const diet = req.query.diet;
     const intolerances = req.query.intolerances;
 
-    //Maybe Not Needed!!!!!!!!!!!
     if (req.session && req.session.username){
       req.session.last_search = query;
     }

@@ -47,8 +47,9 @@ router.get('/favorites', async (req,res,next) => {
     let recipes_id_array = [];
     recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
     console.log(recipes_id_array);
-    const results = await recipe_utils.getPreviewRecipes(recipes_id_array);
-    res.status(200).send(results);
+
+    const result = await recipe_utils.getPreviewRecipes(recipes_id_array);
+    res.status(200).send(result);
   } catch(error){
     next(error); 
   }
@@ -101,6 +102,7 @@ router.post('/myRecipes', async(req, res, next) =>{
   }
 });
 
+
 router.get('/isAFavorites', async (req, res, next)=>{
   try{
     const result = await user_utils.isFavoriteRecipe(req.session.username, req.query.recipeId);
@@ -112,6 +114,7 @@ router.get('/isAFavorites', async (req, res, next)=>{
 
 /**
  * This path returns the recipes that were created by the logged-in user
+ * http://localhost:3000/users/myRecipes
  */
 router.get('/myRecipes', async (req,res,next) => {
   try{
@@ -130,14 +133,37 @@ router.get('/myRecipes', async (req,res,next) => {
 router.get('/myFamilyRecipies', async (req,res,next) => {
   try {
     const user_name = req.session.username;
-    const recipes_id = await user_utils.getMyFamilyRecipes(user_name);
+    const result = await user_utils.getMyFamilyRecipes(user_name);
+    console.log(result);
+    res.status(200).send(result);
+  } catch(err){
+    next(err); 
+  }
+});
 
-    let arrRecipesIds = [];
-    //arr of recipes ids
-    recipes_id.map((element) => arrRecipesIds.push(element.recipe_id)); 
+/*
+ * This path saved the family recipes of the logged-in user
+ * {
+    "name": "pizza",
+    "belongTo": "mom",
+    "occation": "passover",
+    "ingredients": ["flour"],
+    "instructions":["put water"]
+}
+ */
+router.post('/myFamilyRecipies', async (req,res,next) => {
+  try {
+    const name = req.body.name;
+    const belongTo = req.body.belongTo;
+    const occation = req.body.occation;
+    const ingredients = req.body.ingredients;
+    const instructions = req.body.instructions;
+    const username = req.session.username;
 
-    const res = await recipes_utils.getPreviewRecipes(arrRecipesIds);
-    res.status(200).send(res);
+    console.log("username: " + username);
+
+    await user_utils.createFamilyRecipe(username,name,belongTo, occation,ingredients, instructions);
+    res.status(200).send("Family Recipe Create successfully");
   } catch(err){
     next(err); 
   }
